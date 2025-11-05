@@ -87,7 +87,7 @@ void setupTimer() {
 
 // ================== VARIABLES ==================
 double presion = 0;
-double m = 1;//0.90043889 * -0.00010343572090560042;
+double m = 0.000091; //0.90043889 * -0.00010343572090560042;
 double n = 0;
 unsigned long T = 0;
 double lastTemps[3];
