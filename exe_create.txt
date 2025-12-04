@@ -1,0 +1,98 @@
+============================================================
+ CREAR ARCHIVOS .EXE DESDE PYTHON USANDO NUITKA (CMD)
+============================================================
+
+# Requisitos previos:
+# • Python instalado
+# • Nuitka instalado:   pip install nuitka
+# • Plugins PyQt6 si hay interfaz gráfica
+# • Ejecutar SIEMPRE desde CMD (no PowerShell)
+# • Si usas imágenes u otros recursos debes incluirlos manualmente
+
+============================================================
+ COMANDO BASE PARA COMPILAR UN .PY A .EXE
+============================================================
+
+# Reemplaza NOMBRE.py por el archivo Python que quieras convertir
+
+python -m nuitka NOMBRE.py ^
+--standalone ^
+--onefile ^
+--enable-plugin=pyqt6 ^
+--enable-plugin=matplotlib ^
+--windows-disable-console ^
+--lto=yes ^
+--output-dir=build
+
+============================================================
+ INCLUIR IMÁGENES Y ARCHIVOS DE RECURSOS
+============================================================
+
+# FORMATO:
+# --include-data-files=ORIGEN=DESTINO
+# --include-data-dir=ORIGEN=DESTINO
+
+# EJEMPLO 1: incluir archivos PNG y JPG desde una carpeta llamada "imagenes":
+--include-data-files=imagenes\*.png=imagenes ^
+--include-data-files=imagenes\*.jpg=imagenes ^
+
+# EJEMPLO 2: incluir carpeta completa "assets":
+--include-data-dir=assets=assets ^
+
+# EJEMPLO 3: incluir un solo archivo:
+--include-data-files=logo.png=logo.png ^
+
+============================================================
+ EJEMPLO COMPLETO INCLUYENDO IMÁGENES
+============================================================
+
+python -m nuitka reader5.py ^
+--standalone ^
+--onefile ^
+--enable-plugin=pyqt6 ^
+--enable-plugin=matplotlib ^
+--include-data-dir=imagenes=imagenes ^
+--windows-disable-console ^
+--windows-icon-from-ico=icon.ico ^
+--lto=yes ^
+--output-dir=build
+
+# El EXE final se generará en:
+# build\reader5.dist\reader5.exe
+
+============================================================
+ ACCEDER A IMÁGENES DENTRO DEL EXE (IMPORTANTE)
+============================================================
+
+# Cuando usas --onefile, Nuitka extrae los archivos en una carpeta temporal.
+# Para que tu código funcione en ambos modos (normal y empaquetado),
+# usa este método de carga de archivos:
+
+import os, sys
+
+if hasattr(sys, "_MEIPASS"):
+    BASE_PATH = sys._MEIPASS
+else:
+    BASE_PATH = os.path.dirname(__file__)
+
+ruta_imagen = os.path.join(BASE_PATH, "imagenes", "logo.png")
+
+# Con esto, cargar imágenes funcionará:
+# • Python normal
+# • Nuitka standalone
+# • Nuitka onefile
+
+============================================================
+ NOTAS IMPORTANTES
+============================================================
+
+• Compila SIEMPRE desde CMD (no PowerShell).
+• Usa rutas relativas en Python para tus imágenes.
+• Si tienes más carpetas de recursos, simplemente repite:
+  --include-data-dir=carpeta=carpeta ^
+• El tiempo de compilación aumenta si hay muchas imágenes.
+• Para cualquier nueva imagen agregada, compila de nuevo.
+
+============================================================
+ FIN DEL ARCHIVO
+============================================================

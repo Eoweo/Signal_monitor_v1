@@ -113,6 +113,7 @@ bool XYTEKFlow::read_status()
 
 bool XYTEKFlow::read_flowrate()
 {
+    //read_registers(XYTEKFLOW_CMD_USR_REQ_FLOW_RATE_REALTIME[0], XYTEKFLOW_CMD_USR_REQ_FLOW_RATE_REALTIME[1]);
     read_registers(XYTEKFLOW_CMD_USR_REQ_FLOW_RATE_AVG1S[0], XYTEKFLOW_CMD_USR_REQ_FLOW_RATE_AVG1S[1]);
     if (received_ok)
         flow_rate = received_data_to_float(0);

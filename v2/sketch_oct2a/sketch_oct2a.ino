@@ -30,10 +30,11 @@ const float V_IN = 3.278;
 #define FLOW_RE_PIN 18
 #define FLOW_ADDR_1 3
 #define FLOW_SENSOR_COUNT 1
-#define FLOW_SENSOR_MEASURE_PERIOD_MS 500
-
+#define FLOW_SENSOR_MEASURE_PERIOD_MS 200
+float measured_flow = 0;
+  float avgFlow = 0.0;
 unsigned long flow_sensor_measure_last_time = 0;
-float flow_last_valid_values[3] = {0.0, 0.0, 0.0};
+float flow_last_valid_values[10] = {0.0, 0.0,0.0, 0.0,0.0, 0.0,0.0, 0.0, 0.0,0.0};
 uint8_t flow_valid_index = 0;
 bool flow_buffer_filled = false;
 float flow_tare_offset = 0.0;
@@ -57,7 +58,7 @@ void flow_init_pins() {
 
 // Promedia las últimas lecturas válidas
 float getAverageFlow() {
-  uint8_t count = flow_buffer_filled ? 3 : flow_valid_index;
+  uint8_t count = flow_buffer_filled ? 10 : flow_valid_index;
   if (count == 0) return 0.0;
   float sum = 0.0;
   for (uint8_t i = 0; i < count; i++) sum += flow_last_valid_values[i];
@@ -87,6 +88,7 @@ void setupTimer() {
 
 // ================== VARIABLES ==================
 double presion = 0;
+long lectura;
 double m = 0.000091; //0.90043889 * -0.00010343572090560042;
 double n = 0;
 unsigned long T = 0;
@@ -139,8 +141,8 @@ void setup() {
     Serial.println("Error: No se detecta el HX711.");
     while (1);
   }
-  balanza.set_scale();
-  //balanza.tare();
+  balanza.set_raw_mode();
+  balanza.tare();
 
   // TIMER
   setupTimer();
@@ -167,25 +169,29 @@ void loop() {
 
   // --- HX711 Presión ---
   if (balanza.is_ready()) {
-    long lectura = balanza.get_units(5);
+    uint8_t times = 1;
+
+    lectura = balanza.get_value(times);
+    if (lectura > 0){
     presion = (m * lectura) + n;
-  } else {
-    presion = 0;
+    }
   }
 
   // --- XYTEKFlow ---
   static unsigned long lastFlowRead = 0;
   static unsigned long lastLCD_UPDATE = 0;
-  float avgFlow = 0.0;
+
   if (millis() - lastFlowRead >= FLOW_SENSOR_MEASURE_PERIOD_MS) {
     lastFlowRead = millis();
     bool ok_rate = flow_sensors[0].read_flowrate();
-    float measured_flow = 0.0;
+    //float measured_flow = 0.0;
 
     if (ok_rate) {
       measured_flow = flow_sensors[0].flow_rate;
+      if (measured_flow > 0){
       saveValidFlow(measured_flow);
-      avgFlow = getAverageFlow();
+      avgFlow = measured_flow;//getAverageFlow();
+      }
     }
   }
   
@@ -218,7 +224,9 @@ void loop() {
   Serial.print(" ");
   Serial.print(avgTemp, 1);
   Serial.print(" ");
-  Serial.print(avgFlow, 1);
+  Serial.print(measured_flow, 1);
+  //  Serial.print("measue");
+  //Serial.print(measured_flow, 1);
   Serial.println();
 
   //delay(200);
