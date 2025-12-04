@@ -1,0 +1,1 @@
+the actual code uses the format of status banner at the right|

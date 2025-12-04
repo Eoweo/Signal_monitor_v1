@@ -1,0 +1,4 @@
+organ_id: test
+blood_type: destilada
+liver_mass_(g): 0
+infuse: 00h 00m 00s

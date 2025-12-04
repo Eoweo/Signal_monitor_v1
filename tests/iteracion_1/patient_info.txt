@@ -1,0 +1,4 @@
+organ_id: asda
+blood_type: A
+liver_mass_(g): 1000
+infuse: 00h 00m 00s

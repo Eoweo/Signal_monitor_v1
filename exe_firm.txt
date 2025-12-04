@@ -1,0 +1,81 @@
+===============================
+ COMANDOS PARA FIRMAR UN EXE
+===============================
+
+1) RUTA DEL SIGNTOOL (64 bits):
+
+"C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64\signtool.exe"
+
+========================================
+ FIRMAR UN EJECUTABLE CON CERTIFICADO
+========================================
+
+SINTAXIS:
+
+"RUTA_DE_SIGNTOOL" sign /f "RUTA_DEL_CERTIFICADO.pfx" /p CONTRASEÑA /tr URL_TIMESTAMP /td sha256 /fd sha256 "RUTA_DEL_EXE"
+
+EJEMPLO (MODIFICAR RUTAS SEGÚN TU EXE):
+
+"C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64\signtool.exe" sign ^
+/f "C:\Users\Eoweo\Desktop\certificado_eoweo.pfx" ^
+/p clave123 ^
+/tr http://timestamp.sectigo.com ^
+/td sha256 ^
+/fd sha256 ^
+"C:\Users\Eoweo\Desktop\main.exe"
+
+
+===============================
+ SERVIDORES DE TIMESTAMP
+===============================
+
+Si el primero falla, puedes usar cualquiera de estos:
+
+http://timestamp.sectigo.com
+http://timestamp.digicert.com
+http://timestamp.globalsign.com/?signature=sha2
+http://time.certum.pl
+
+Cámbialo en el comando así:
+
+/tr http://timestamp.digicert.com
+
+
+========================================
+ VERIFICAR LA FIRMA DE UN EJECUTABLE
+========================================
+
+SINTAXIS:
+
+"RUTA_DE_SIGNTOOL" verify /pa /v "RUTA_DEL_EXE"
+
+EJEMPLO:
+
+"C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64\signtool.exe" verify /pa /v "C:\Users\Eoweo\Desktop\main.exe"
+
+
+===============================
+ OPCIONES ÚTILES EXTRAS
+===============================
+
+1) Mostrar solo la firma (menos detalles)
+sign /v "archivo.exe"
+
+2) Verificar sin políticas:
+verify /all "archivo.exe"
+
+3) Firmar con doble firma (SHA1 + SHA256) para compatibilidad:
+NO NECESARIO EN WINDOWS 10/11
+
+4) Firmar un .dll es igual que un .exe
+
+
+===============================
+ NOTAS IMPORTANTES
+===============================
+
+• Debes ejecutar los comandos en CMD, NO en PowerShell.
+• Cambia la ruta del EXE cada vez que firmes uno distinto.
+• Cambia la ruta del certificado solo si lo mueves.
+• Si tu certificado es autofirmado, Windows dirá que no es de confianza.
+• Puedes agregar el certificado a "Trusted Root Certification Authorities" si lo usarás solo tú.

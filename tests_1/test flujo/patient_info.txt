@@ -1,0 +1,4 @@
+organ_id: none
+blood_type: none
+liver_mass_(g): none
+Infuse Time: 00h 15m 45s
