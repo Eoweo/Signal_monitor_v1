@@ -1,4 +1,0 @@
-organ_id: 
-blood_type: 
-liver_mass_(g): 
-infuse: 00h 00m 00s

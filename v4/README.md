@@ -1,1 +1,0 @@
-the actual code apply the pyqtgraph library
